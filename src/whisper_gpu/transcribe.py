@@ -54,7 +54,7 @@ def preload_cuda_libs() -> None:
                 try:
                     ctypes.CDLL(so, mode=ctypes.RTLD_GLOBAL)
                 except OSError:
-                    pass
+                    log.debug("could not preload CUDA lib %s", so, exc_info=True)
 
 
 # A CUDA error (usually out-of-memory because another process holds VRAM) corrupts
@@ -97,6 +97,7 @@ def gpu_free_mib() -> int | None:
         )
         return int(out.stdout.split("\n")[0].strip())
     except Exception:  # noqa: BLE001  (no nvidia-smi / parse error → unknown)
+        log.debug("nvidia-smi free-VRAM query failed", exc_info=True)
         return None
 
 

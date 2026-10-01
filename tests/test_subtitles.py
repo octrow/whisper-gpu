@@ -95,3 +95,9 @@ def test_find_subtitle_ignores_other_ids(tmp_path: Path) -> None:
     (tmp_path / "999.m4a").write_bytes(b"")
     (tmp_path / "888.en.vtt").write_text(VTT, encoding="utf-8")
     assert find_subtitle(tmp_path / "999.m4a") is None
+
+
+def test_find_subtitle_handles_glob_chars_in_the_name(tmp_path: Path) -> None:
+    sub = tmp_path / "clip[1].en.vtt"
+    sub.write_text("WEBVTT\n", encoding="utf-8")
+    assert find_subtitle(tmp_path / "clip[1].m4a") == sub

@@ -7,6 +7,7 @@ never imports faster-whisper.
 
 from __future__ import annotations
 
+import glob
 import re
 from pathlib import Path
 
@@ -17,7 +18,7 @@ _SUB_EXTS = (".vtt", ".srt")
 def find_subtitle(audio_path: Path) -> Path | None:
     """Return a sibling caption file for the given audio file, if any."""
     stem_id = audio_path.name.split(".")[0]
-    for sibling in sorted(audio_path.parent.glob(f"{stem_id}.*")):
+    for sibling in sorted(audio_path.parent.glob(f"{glob.escape(stem_id)}.*")):
         if sibling.suffix.lower() in _SUB_EXTS:
             return sibling
     return None
