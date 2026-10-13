@@ -1,6 +1,7 @@
 [project]
 name = "whisper-gpu"
 version = "0.1.0"
+license = "MIT"
 description = "GPU (faster-whisper) transcription primitives: cuDNN/cuBLAS preload, lazy model cache, GPU-OOM detection with CPU fallback, plus VTT/SRT caption parsing"
 requires-python = ">=3.12"
 dependencies = [
