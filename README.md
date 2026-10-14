@@ -1,4 +1,6 @@
-# whisper-gpu
+# whisper-gpu-kit
+
+Installed as `whisper-gpu-kit`, imported as `whisper_gpu`.
 
 GPU transcription plumbing for `faster-whisper`, extracted from two repos that had
 the same code byte-for-byte (`tiktok-lazy-follower/src/tlf/transcribe.py`,
@@ -10,7 +12,7 @@ package imports fine on a machine with no GPU deps; `whisper_gpu.subtitles` need
 only `webvtt-py`.
 
 ```bash
-uv add --editable ~/dev/pylibs/whisper-gpu          # + `[gpu]` extra for the CUDA runtimes
+uv add whisper-gpu-kit                      # + `[gpu]` extra for the CUDA runtimes
 ```
 
 ## Why it exists

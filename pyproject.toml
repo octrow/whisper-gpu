@@ -1,13 +1,19 @@
 [project]
-name = "whisper-gpu"
-version = "0.1.0"
+name = "whisper-gpu-kit"
+version = "0.1.1"
 license = "MIT"
+readme = "README.md"
+authors = [{ name = "Daniil Petrov" }]
 description = "GPU (faster-whisper) transcription primitives: cuDNN/cuBLAS preload, lazy model cache, GPU-OOM detection with CPU fallback, plus VTT/SRT caption parsing"
 requires-python = ">=3.12"
 dependencies = [
     "faster-whisper>=1.2",
     "webvtt-py>=0.5",
 ]
+
+[project.urls]
+Homepage = "https://github.com/octrow/whisper-gpu"
+Issues = "https://github.com/octrow/whisper-gpu/issues"
 
 [project.optional-dependencies]
 # Pip-installed CUDA runtimes that CTranslate2 dlopen's at model-load time.
@@ -21,6 +27,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/whisper_gpu"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "README.md", "LICENSE"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
