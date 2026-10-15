@@ -92,7 +92,7 @@ so migrating the two consumers is an import swap.
 ## Tests
 
 ```bash
-uv run --package whisper-gpu --extra dev pytest whisper-gpu/tests -q
+uv sync --extra dev && uv run pytest -q
 ```
 
 No GPU and no model download: the classifiers are pure string logic, and the
