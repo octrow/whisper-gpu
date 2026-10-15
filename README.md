@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.svg">
-    <img src="assets/readme/hero-light.svg" width="100%" alt="whisper-gpu-kit: run Whisper on the GPU, finish on the CPU when VRAM runs out, download the model only when it is missing. Beside it, the log of one transcribe_with_fallback call: the model loads on cuda, transcription fails with CUDA out of memory, the model reloads on cpu and returns the text, the language 'en' and the device 'cpu'.">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/hero-dark.svg">
+    <img src="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/hero-light.svg" width="100%" alt="whisper-gpu-kit: run Whisper on the GPU, finish on the CPU when VRAM runs out, download the model only when it is missing. Beside it, the log of one transcribe_with_fallback call: the model loads on cuda, transcription fails with CUDA out of memory, the model reloads on cpu and returns the text, the language 'en' and the device 'cpu'.">
   </picture>
 </p>
 
@@ -9,7 +9,7 @@
   <a href="https://github.com/octrow/whisper-gpu/actions/workflows/ci.yml"><img src="https://github.com/octrow/whisper-gpu/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://pypi.org/project/whisper-gpu-kit/"><img src="https://img.shields.io/pypi/v/whisper-gpu-kit" alt="PyPI"></a>
   <a href="https://pypi.org/project/whisper-gpu-kit/"><img src="https://img.shields.io/pypi/pyversions/whisper-gpu-kit" alt="Python versions"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
+  <a href="https://github.com/octrow/whisper-gpu/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
 </p>
 
 The GPU plumbing around [`faster-whisper`](https://github.com/SYSTRAN/faster-whisper) that a batch
@@ -53,8 +53,8 @@ packages, and `whisper_gpu.subtitles` needs only `webvtt-py`.
 ## How it works
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/flow-dark.svg">
-  <img src="assets/readme/flow-light.svg" width="100%" alt="Four steps: 1, find_subtitle looks for a sibling .vtt or .srt and, if found, parses it and skips the GPU. 2, warn_if_low_vram reads free VRAM from nvidia-smi and warns under 3500 MiB. 3, whisper_transcribe runs large-v3 in float16 with the model cached per device. 4, on a CUDA error only, free_gpu_model drops the GPU model and the file is redone in int8 on CPU; bad audio still raises.">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/flow-dark.svg">
+  <img src="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/flow-light.svg" width="100%" alt="Four steps: 1, find_subtitle looks for a sibling .vtt or .srt and, if found, parses it and skips the GPU. 2, warn_if_low_vram reads free VRAM from nvidia-smi and warns under 3500 MiB. 3, whisper_transcribe runs large-v3 in float16 with the model cached per device. 4, on a CUDA error only, free_gpu_model drops the GPU model and the file is redone in int8 on CPU; bad audio still raises.">
 </picture>
 
 Each piece fixes a failure I hit in practice:
@@ -153,4 +153,4 @@ monkeypatched.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/octrow/whisper-gpu/blob/main/LICENSE)
