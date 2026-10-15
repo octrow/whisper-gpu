@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="736" viewBox="0 0 600 736" role="img" aria-labelledby="t d">
+  <title id="t">whisper-gpu-kit</title>
+  <desc id="d">whisper-gpu-kit: faster-whisper on the GPU, with a CPU fallback when VRAM runs out and no re-download when the error is really CUDA. Below: the log of one transcribe_with_fallback call where the GPU runs out of memory and the file is redone on CPU.</desc>
+  <style>
+    .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Noto Sans", sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "DejaVu Sans Mono", monospace; }
+  </style>
+  <rect width="600" height="736" rx="20" fill="#121417"/>
+
+  <g id="title-block">
+    <text x="36" y="62" class="mono" font-size="18" letter-spacing="1.2" fill="#9AA0A8">FASTER-WHISPER · CUDA 12 · PYTHON 3.12+</text>
+    <text x="33" y="126" class="sans" font-size="54" font-weight="800" letter-spacing="-1.2" fill="#E6E7EA">whisper-gpu-kit</text>
+    <text x="36" y="172" class="sans" font-size="24" font-weight="600" fill="#E6E7EA">Run Whisper on the GPU.</text>
+    <text x="36" y="206" class="sans" font-size="24" fill="#9AA0A8">Finish on the CPU when VRAM runs out.</text>
+    <text x="36" y="240" class="sans" font-size="24" fill="#9AA0A8">Download the model only when it is missing.</text>
+
+    <!-- device route: cuda fails, cpu finishes -->
+    <g class="mono" font-size="20">
+      <rect x="36" y="272" width="176" height="52" rx="10" fill="none" stroke="#E6E7EA" stroke-width="2"/>
+      <text x="124" y="305" text-anchor="middle" fill="#E6E7EA">cuda float16</text>
+      <path d="M220 298 H360" stroke="#F0A35A" stroke-width="3" stroke-dasharray="7 6"/>
+      <path d="M280 288 l20 20 M300 288 l-20 20" stroke="#F0A35A" stroke-width="3" stroke-linecap="round"/>
+      <path d="M368 298 l-14 -9 v18 z" fill="#F0A35A"/>
+      <rect x="376" y="272" width="148" height="52" rx="10" fill="#6CC48F"/>
+      <text x="450" y="305" text-anchor="middle" fill="#121417">cpu int8</text>
+    </g>
+  </g>
+
+  <g id="project-proof">
+    <rect x="20" y="356" width="560" height="356" rx="14" fill="#1C1F24" stroke="#30353B" stroke-width="2"/>
+    <text x="44" y="396" class="mono" font-size="18" letter-spacing="1" fill="#9AA0A8">transcribe_with_fallback(audio)</text>
+    <g class="mono" font-size="18">
+      <text x="44" y="438" fill="#E6E7EA">Loading faster-whisper large-v3 on cuda…</text>
+      <text x="44" y="466" fill="#E6E7EA">Whisper model ready (cuda).</text>
+      <rect x="32" y="482" width="4" height="84" fill="#F0A35A"/>
+      <text x="44" y="502" fill="#F0A35A">GPU transcription failed (CUDA failed</text>
+      <text x="44" y="530" fill="#F0A35A">with error out of memory). … Falling</text>
+      <text x="44" y="558" fill="#F0A35A">back to CPU — slower; free VRAM and …</text>
+      <text x="44" y="594" fill="#E6E7EA">Loading faster-whisper large-v3 on cpu…</text>
+      <text x="44" y="622" fill="#E6E7EA">Whisper model ready (cpu).</text>
+      <text x="44" y="672" fill="#6CC48F">→ ('Hello and welcome back.', 'en', 'cpu')</text>
+    </g>
+  </g>
+</svg>

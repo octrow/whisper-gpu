@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="824" viewBox="0 0 600 824" role="img" aria-labelledby="t d">
+<title id="t">How whisper-gpu-kit transcribes a file</title>
+<desc id="d">Four steps: use a sibling caption file if there is one; otherwise check free VRAM and warn; transcribe with large-v3 on CUDA; on a CUDA error, drop the GPU model and redo the file on CPU in int8. Bad audio still raises.</desc>
+<rect width="600" height="824" rx="16" fill="#F4F2EE"/>
+<g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Ubuntu, sans-serif">
+<rect x="24" y="32" width="552" height="160" rx="10" fill="#FFFFFF" stroke="#D9D5CC" stroke-width="2"/>
+<text x="48" y="74" font-size="26" font-weight="700" fill="#17181C">1  Captions</text>
+<text x="48" y="108" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#2E7D52">find_subtitle()</text>
+<text x="48" y="144" font-size="21" fill="#5E6168">sibling .vtt / .srt? parse it,</text>
+<text x="48" y="174" font-size="21" fill="#5E6168">skip the GPU entirely</text>
+<path d="M300 196 v22" stroke="#B4540A" stroke-width="3"/><path d="M300 228 l-8 -12 h16 z" fill="#B4540A"/>
+<rect x="24" y="232" width="552" height="160" rx="10" fill="#FFFFFF" stroke="#D9D5CC" stroke-width="2"/>
+<text x="48" y="274" font-size="26" font-weight="700" fill="#17181C">2  Preflight</text>
+<text x="48" y="308" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#2E7D52">warn_if_low_vram()</text>
+<text x="48" y="344" font-size="21" fill="#5E6168">free VRAM via nvidia-smi;</text>
+<text x="48" y="374" font-size="21" fill="#5E6168">warns under 3500 MiB</text>
+<path d="M300 396 v22" stroke="#B4540A" stroke-width="3"/><path d="M300 428 l-8 -12 h16 z" fill="#B4540A"/>
+<rect x="24" y="432" width="552" height="160" rx="10" fill="#FFFFFF" stroke="#D9D5CC" stroke-width="2"/>
+<text x="48" y="474" font-size="26" font-weight="700" fill="#17181C">3  GPU</text>
+<text x="48" y="508" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#2E7D52">whisper_transcribe()</text>
+<text x="48" y="544" font-size="21" fill="#5E6168">large-v3, float16,</text>
+<text x="48" y="574" font-size="21" fill="#5E6168">model cached per device</text>
+<path d="M300 596 v22" stroke="#B4540A" stroke-width="3"/><path d="M300 628 l-8 -12 h16 z" fill="#B4540A"/>
+<rect x="24" y="632" width="552" height="160" rx="10" fill="#FFFFFF" stroke="#D9D5CC" stroke-width="2"/>
+<text x="48" y="674" font-size="26" font-weight="700" fill="#17181C">4  CPU fallback</text>
+<text x="48" y="708" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#2E7D52">free_gpu_model()</text>
+<text x="48" y="744" font-size="21" fill="#5E6168">CUDA error only:</text>
+<text x="48" y="774" font-size="21" fill="#5E6168">redo file in int8; bad audio raises</text>
+</g>
+</svg>

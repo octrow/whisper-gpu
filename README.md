@@ -1,5 +1,7 @@
 <p align="center">
   <picture>
+    <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/hero-mobile-dark.svg">
+    <source media="(max-width: 600px)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/hero-mobile-light.svg">
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/hero-dark.svg">
     <img src="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/hero-light.svg" width="100%" alt="whisper-gpu-kit: run Whisper on the GPU, finish on the CPU when VRAM runs out, download the model only when it is missing. Beside it, the log of one transcribe_with_fallback call: the model loads on cuda, transcription fails with CUDA out of memory, the model reloads on cpu and returns the text, the language 'en' and the device 'cpu'.">
   </picture>
@@ -53,6 +55,8 @@ packages, and `whisper_gpu.subtitles` needs only `webvtt-py`.
 ## How it works
 
 <picture>
+  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/flow-mobile-dark.svg">
+  <source media="(max-width: 600px)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/flow-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/flow-dark.svg">
   <img src="https://raw.githubusercontent.com/octrow/whisper-gpu/main/assets/readme/flow-light.svg" width="100%" alt="Four steps: 1, find_subtitle looks for a sibling .vtt or .srt and, if found, parses it and skips the GPU. 2, warn_if_low_vram reads free VRAM from nvidia-smi and warns under 3500 MiB. 3, whisper_transcribe runs large-v3 in float16 with the model cached per device. 4, on a CUDA error only, free_gpu_model drops the GPU model and the file is redone in int8 on CPU; bad audio still raises.">
 </picture>
