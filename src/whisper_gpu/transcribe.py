@@ -42,7 +42,7 @@ def preload_cuda_libs() -> None:
     import glob
 
     try:
-        import nvidia  # noqa: F401
+        import nvidia
     except ImportError:
         return
     # `nvidia` is a namespace package — no __file__, so use __path__.
@@ -96,7 +96,7 @@ def gpu_free_mib() -> int | None:
             capture_output=True, text=True, timeout=10,
         )
         return int(out.stdout.split("\n")[0].strip())
-    except Exception:  # noqa: BLE001  (no nvidia-smi / parse error → unknown)
+    except Exception:
         log.debug("nvidia-smi free-VRAM query failed", exc_info=True)
         return None
 
@@ -141,7 +141,7 @@ def get_whisper(device: str, model: str = DEFAULT_MODEL,
                 model, device=device, compute_type=compute,
                 local_files_only=True,
             )
-        except Exception as exc:  # noqa: BLE001  (not cached yet → download once)
+        except Exception as exc:
             # Only a genuine cache miss can be fixed by downloading. A CUDA/cuDNN
             # failure would trigger a pointless 3GB re-download and then fail again.
             if not is_cache_miss(exc):
@@ -186,7 +186,7 @@ def transcribe_with_fallback(
             compute_type=compute_type,
         )
         return text, lang, device
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         if not (device == "cuda" and cpu_fallback and is_gpu_error(exc)):
             raise
         log.warning("GPU transcription failed (%s). Likely VRAM is occupied (check "
