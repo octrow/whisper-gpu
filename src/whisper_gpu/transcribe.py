@@ -93,7 +93,7 @@ def gpu_free_mib() -> int | None:
     try:
         out = subprocess.run(
             ["nvidia-smi", "--query-gpu=memory.free", "--format=csv,noheader,nounits"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True, text=True, timeout=10, check=False,
         )
         return int(out.stdout.split("\n")[0].strip())
     except Exception:
