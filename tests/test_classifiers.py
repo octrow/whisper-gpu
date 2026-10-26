@@ -42,9 +42,11 @@ def test_is_gpu_error_is_case_insensitive() -> None:
 
 
 CACHE_MISSES = [
-    "We couldn't connect to huggingface.co to load this file, couldn't find it in the "
-    "cached files and it looks like Systran/faster-whisper-large-v3 is not the path to a "
-    "directory containing a file named config.json. local_files_only=True",
+    (
+        "We couldn't connect to huggingface.co to load this file, couldn't find it in the "
+        "cached files and it looks like Systran/faster-whisper-large-v3 is not the path to a "
+        "directory containing a file named config.json. local_files_only=True"
+    ),
     "Entry Not Found for url: https://huggingface.co/.../model.bin",
     "No such file or directory: '/home/u/.cache/huggingface/hub/models--x/snapshots'",
     "Path /models/large-v3 does not exist",
