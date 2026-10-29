@@ -173,7 +173,7 @@ def test_gpu_error_propagates_when_fallback_disabled(monkeypatch) -> None:
 
 def test_cpu_device_never_falls_back(monkeypatch) -> None:
     """Starting on CPU means a failure is real — nothing to fall back to."""
-    seen, _ = _fallback_env(monkeypatch, None)
+    _fallback_env(monkeypatch, None)
 
     def boom(*a, **kw):
         raise RuntimeError("cuda out of memory")
