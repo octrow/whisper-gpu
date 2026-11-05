@@ -57,10 +57,10 @@ def preload_cuda_libs() -> None:
                     log.debug("could not preload CUDA lib %s", so, exc_info=True)
 
 
-# A CUDA error (usually out-of-memory because another process holds VRAM) corrupts
-# the device context — every later GPU call then dies with "invalid device ordinal".
-# Detect it so we (a) don't mislabel good inputs as "undecodable" and (b) stop
-# hammering the dead GPU and switch to CPU.
+# A CUDA error (usually out-of-memory because another process holds VRAM) can corrupt
+# the device context — later GPU calls then die with "invalid device ordinal".
+# Detect it so we (a) don't mislabel good inputs as "undecodable" and (b) redo that
+# file on CPU. The failure is not remembered: the next call tries the GPU again.
 GPU_ERR_MARKERS = ("out of memory", "cuda", "cublas", "cudnn",
                    "device ordinal", "parallel_for", "cudaerror")
 

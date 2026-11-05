@@ -6,13 +6,13 @@ Open bugs, plans and ideas for future work. Date: 2026-11-05. Rule: a closed ite
 
 Findings: [docs/plans/2026-11-05-logic-map-fixes.md](docs/plans/2026-11-05-logic-map-fixes.md). Work order is in that file.
 
-- [x] ✅ 2026-11-05 MEDIUM #1 (cache now keyed by (device, model, compute), `free_gpu_model` drops all cuda keys; не закоммичено): `get_whisper` caches by device only, a second model gets the first (`transcribe.py:127`; also system-design Risks)
-- ✅ 2026-11-05 решено: latch не нужен, каждый вызов заново пробует cuda и падает на CPU по файлу; рестарт процесса возвращает GPU. MEDIUM #8: no "GPU is dead" latch, a stuck GPU costs one failed CUDA load per file (`transcribe.py:60-63`; also system-design Risks). Question: retry may be intended if VRAM contention is transient
-- [x] ✅ 2026-11-05 MEDIUM #3 (VTT cue text split into lines before dedup; не закоммичено): `_join_dedup` does not split multi-line VTT cues, phrases come out twice (`subtitles.py:64`)
+- [x] ✅ 2026-11-05 MEDIUM #1 (cache now keyed by (device, model, compute), `free_gpu_model` drops all cuda keys; 0fdf935): `get_whisper` caches by device only, a second model gets the first (`transcribe.py:127`; also system-design Risks)
+- ✅ 2026-11-05 решено, оставить как есть (c14be14): MEDIUM #8, no "GPU is dead" latch. Каждый вызов заново пробует cuda и падает на CPU по файлу, так временный конфликт за VRAM проходит сам; застрявший GPU стоит одной неудачной загрузки на файл, рестарт процесса возвращает GPU (`transcribe.py` docstring `transcribe_with_fallback`)
+- [x] ✅ 2026-11-05 MEDIUM #3 (VTT cue text split into lines before dedup; 0fdf935): `_join_dedup` does not split multi-line VTT cues, phrases come out twice (`subtitles.py:64`)
 - [ ] MEDIUM: model download has no timeout or size guard, a Hub stall blocks the caller (`transcribe.py:140-151`; [system-design.md](docs/system-design.md) Risks)
 - [ ] LOW #7: CUDA model is not freed before the CPU retry, VRAM stays held (`transcribe.py:189-200`)
 - [ ] LOW #2, #11: substring error classifiers misfire (`transcribe.py:69`, `:75`)
-- [ ] LOW #4, #6, #9: subtitle parsing edge cases (dotted ids, SRT tags, digit-only cues). #10 (BOM) ✅ 2026-11-05: .srt read as utf-8-sig, не закоммичено in `subtitles.py`
+- [ ] LOW #4, #6, #9: subtitle parsing edge cases (dotted ids, SRT tags, digit-only cues). #10 (BOM) ✅ 2026-11-05: .srt read as utf-8-sig in `subtitles.py`, 0fdf935
 
 ## Plans and features
 

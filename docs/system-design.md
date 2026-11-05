@@ -83,9 +83,10 @@ from disk (seconds). If the HF cache is missing, the first call downloads 2.9 GB
 
 - x10 traffic (10-300x in files/day): the single GPU is serial; saturates at ~2900 files/day (assumed 30 s/file). Before
   that, VRAM contention with another process (browser, display, other jobs) breaks first, and every miss costs ~10x time.
-- GPU OOM: handled by CPU retry (logic-map step 6). But the CUDA model's VRAM stays held during the CPU retry (#7), and no
-  "GPU is dead" memory exists (#8): in a bad state every file pays one failed CUDA load plus the CPU run. This is the first
-  thing that scales badly: a batch of 1000 files with a stuck GPU does 1000 failed loads.
+- GPU OOM: handled by CPU retry (logic-map step 6). But the CUDA model's VRAM stays held during the CPU retry (#7), and, by
+  design, no "GPU is dead" memory exists (#8): a transient VRAM clash recovers on the next file, but in a stuck state every
+  file pays one failed CUDA load plus the CPU run. This is the first thing that scales badly: a batch of 1000 files with a
+  stuck GPU does 1000 failed loads; restarting the process is the fix.
 - Cache dies (process restart): model reload from disk. Harmless.
 - Hub slow or down: download blocks without a timeout; consumer hangs. Offline with cache present is fine (`local_files_only=True` first).
 - `nvidia-smi` hangs: capped at 10 s, fail-open.
@@ -106,14 +107,14 @@ from disk (seconds). If the HF cache is missing, the first call downloads 2.9 GB
 Design: a stateless library on rung 1, with a captions shortcut, a per-(device, model, compute) model cache and a CPU safety net.
 It holds the real load (tens of files/day against a ~2900/day GPU ceiling).
 Assumptions that would change it: real seconds/file (not measured), a second model or concurrent threads (cache key, lock),
-long unattended batches with a flaky GPU (add a "GPU dead" latch).
+long unattended batches with a flaky GPU (the consumer can pass `device_used` on, as gce does with its own `gpu_dead` flag).
 Next rung: a queue plus a worker only when a consumer needs concurrency or sustained >1000 files/day; trigger metric:
 GPU utilisation over 70% for the day, or a batch taking longer than its window. Cheap move first: add timing and
 `device_used` counters in the consumer logs to replace the assumed numbers.
 
 ## Risks
 
-- MEDIUM: `transcribe.py:170-205` no GPU-dead latch (#8): a stuck GPU costs a failed load per file; with 1000 files this wastes hours.
+- MEDIUM, accepted by design (#8): `transcribe_with_fallback` has no GPU-dead latch; a stuck GPU costs a failed load per file (hours over 1000 files) until the process restarts or the consumer stops asking for `cuda`.
 - MEDIUM: `transcribe.py:140-151` model download has no timeout or size guard; a Hub stall blocks the caller forever.
 - LOW: `transcribe.py:26` module-level dict without a lock; not safe if a consumer adds threads.
 - LOW: `transcribe.py` CUDA VRAM held during CPU retry (#7); on 8 GB this can make the next file OOM too.
