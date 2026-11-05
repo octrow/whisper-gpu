@@ -55,7 +55,7 @@ All entry points are public functions of the package (`__init__` re-exports). Th
 |---|---|---|---|
 | `find_subtitle`, `parse_subtitle`, `lang_from_subtitle_name` | none | none | caption path only |
 | `whisper_transcribe` | `cuda` | none | returns `(text, lang)`; model `large-v3`, `float16`, beam 5; no VAD filter |
-| `transcribe_with_fallback` | `cuda` | **CPU on GPU error** (`cpu_fallback=True`) | returns `(text, lang, device_used)`; CPU run uses `int8` and ignores `compute_type`; keeps no memory of the failure, the next call tries `cuda` again (#8) |
+| `transcribe_with_fallback` | `cuda` | **CPU on GPU error** (`cpu_fallback=True`) | returns `(text, lang, device_used)`; CPU run uses `int8` and ignores `compute_type`; keeps no memory of the failure, the next call tries `cuda` again (#8, by design) |
 | `get_whisper`, `warn_if_low_vram`, `gpu_free_mib`, `free_gpu_model`, `preload_cuda_libs`, `is_gpu_error`, `is_cache_miss` | - | - | building blocks; constants `DEFAULT_MODEL`, `DEFAULT_COMPUTE_TYPE`, `WHISPER_MIN_FREE_MIB`, both marker tuples are exported too |
 
 Legacy underscore aliases (`_get_whisper`, `_is_gpu_error`, ...) exist in `transcribe` for tlf/gce; they are not re-exported by `__init__`.
@@ -142,6 +142,6 @@ Module: `transcribe`
 
 - The `cache` and `not found` markers match any load error mentioning them, which starts a second load with Hub access (#2).
 - `find_subtitle` picks the alphabetically first caption and breaks on ids containing dots (#4).
-- `transcribe_with_fallback` keeps no "GPU is dead" state: every later call reloads the model on `cuda` and fails again (#8).
+- `transcribe_with_fallback` keeps no "GPU is dead" state, by design (#8): every later call tries `cuda` again, so a transient VRAM clash recovers, while a stuck GPU costs one failed CUDA load per file; restarting the process returns the GPU.
 - The CUDA model's VRAM is held through the CPU retry (#7).
 - SRT parsing drops all-digit captions and keeps inline tags (#9, #6).

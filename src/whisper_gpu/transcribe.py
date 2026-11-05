@@ -181,6 +181,11 @@ def transcribe_with_fallback(
     model first and then redo the file on CPU instead of mislabeling good input as
     undecodable. Non-GPU errors (undecodable audio) propagate unchanged — the caller
     decides whether to skip-list them.
+
+    By design there is no "GPU is dead" latch: the failure is not remembered, so every
+    call tries ``cuda`` again and falls back to CPU per file. A transient VRAM clash
+    can therefore recover on its own; a really stuck GPU costs one failed CUDA load
+    per file, and restarting the process returns the GPU.
     """
     try:
         text, lang = whisper_transcribe(
