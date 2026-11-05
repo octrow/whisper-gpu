@@ -22,7 +22,7 @@ from pathlib import Path
 
 log = logging.getLogger("whisper_gpu.transcribe")
 
-# Lazily-loaded whisper models, keyed by device ('cuda'/'cpu') — heavy import + load.
+# Lazily-loaded whisper models, keyed by (device, model, compute_type) — heavy import + load.
 _WHISPER_MODELS: dict = {}
 
 DEFAULT_MODEL = "large-v3"
@@ -117,27 +117,29 @@ def free_gpu_model() -> None:
     """Drop our cached CUDA model and run GC so its VRAM is released before a CPU
     fallback — and so a later re-run starts clean."""
     import gc
-    _WHISPER_MODELS.pop("cuda", None)
+    for key in [k for k in _WHISPER_MODELS if k[0] == "cuda"]:
+        del _WHISPER_MODELS[key]
     gc.collect()
 
 
 def get_whisper(device: str, model: str = DEFAULT_MODEL,
                 compute_type: str = DEFAULT_COMPUTE_TYPE):
     """Lazily build (and cache) the whisper model for `device` ('cuda' or 'cpu')."""
-    if device not in _WHISPER_MODELS:
+    # int8 on CPU — far faster than float16 and accurate enough for transcripts.
+    compute = compute_type if device == "cuda" else "int8"
+    key = (device, model, compute)
+    if key not in _WHISPER_MODELS:
         if device == "cuda":
             preload_cuda_libs()
         from faster_whisper import WhisperModel
 
-        # int8 on CPU — far faster than float16 and accurate enough for transcripts.
-        compute = compute_type if device == "cuda" else "int8"
         log.info("Loading faster-whisper %s on %s…", model, device)
         try:
             # local_files_only: use the already-downloaded HF cache and SKIP the
             # per-load network check to the HF Hub — that check can hang for minutes
             # when the network is slow/unreachable (the "unauthenticated requests to
             # the HF Hub" warning + stall).
-            _WHISPER_MODELS[device] = WhisperModel(
+            _WHISPER_MODELS[key] = WhisperModel(
                 model, device=device, compute_type=compute,
                 local_files_only=True,
             )
@@ -148,12 +150,12 @@ def get_whisper(device: str, model: str = DEFAULT_MODEL,
                 raise
             log.info("Model not in local cache — downloading %s from HF Hub (one-time)…",
                      model)
-            _WHISPER_MODELS[device] = WhisperModel(
+            _WHISPER_MODELS[key] = WhisperModel(
                 model, device=device, compute_type=compute,
                 local_files_only=False,
             )
         log.info("Whisper model ready (%s).", device)
-    return _WHISPER_MODELS[device]
+    return _WHISPER_MODELS[key]
 
 
 def whisper_transcribe(

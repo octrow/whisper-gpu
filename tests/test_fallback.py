@@ -122,7 +122,16 @@ def test_cuda_load_failure_does_not_trigger_download(fake_whisper) -> None:
     fake_whisper.fail_with["load"] = RuntimeError("Library cudnn_ops.so.9 is not found")
     with pytest.raises(RuntimeError, match="cudnn"):
         T.get_whisper("cuda")
-    assert "cuda" not in T._WHISPER_MODELS
+    assert not T._WHISPER_MODELS
+
+
+def test_cache_is_keyed_by_model_and_compute_type(fake_whisper) -> None:
+    big = T.get_whisper("cuda", "large-v3", "float16")
+    tiny = T.get_whisper("cuda", "tiny", "float16")
+    int8 = T.get_whisper("cuda", "large-v3", "int8")
+    assert len({id(big), id(tiny), id(int8)}) == 3
+    assert tiny.model == "tiny"
+    assert T.get_whisper("cuda", "tiny", "float16") is tiny
 
 
 def _fallback_env(monkeypatch, gpu_exc: Exception | None):
@@ -184,9 +193,13 @@ def test_cpu_device_never_falls_back(monkeypatch) -> None:
 
 
 def test_free_gpu_model_drops_only_cuda_entry() -> None:
-    T._WHISPER_MODELS.update({"cuda": object(), "cpu": object()})
+    T._WHISPER_MODELS.update({
+        ("cuda", "large-v3", "float16"): object(),
+        ("cuda", "tiny", "int8"): object(),
+        ("cpu", "large-v3", "int8"): object(),
+    })
     T.free_gpu_model()
-    assert list(T._WHISPER_MODELS) == ["cpu"]
+    assert list(T._WHISPER_MODELS) == [("cpu", "large-v3", "int8")]
 
 
 def test_warn_if_low_vram_warns_below_threshold(monkeypatch, caplog) -> None:

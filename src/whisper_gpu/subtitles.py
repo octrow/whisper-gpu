@@ -38,9 +38,9 @@ def parse_subtitle(path: Path) -> str:
     if suffix == ".vtt":
         import webvtt
 
-        lines = [c.text.strip() for c in webvtt.read(str(path))]
+        lines = [ln for c in webvtt.read(str(path)) for ln in c.text.splitlines()]
     elif suffix == ".srt":
-        lines = _parse_srt(path.read_text(encoding="utf-8", errors="replace"))
+        lines = _parse_srt(path.read_text(encoding="utf-8-sig", errors="replace"))
     else:
         raise ValueError(f"Unsupported subtitle format: {path}")
     return _join_dedup(lines)

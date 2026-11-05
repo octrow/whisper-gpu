@@ -80,8 +80,8 @@ Module: `subtitles`
 Decides: how a caption file turns into text.
 In: caption `Path`. Out: `str`, one line per distinct caption.
 Branches:
-- `.vtt` → `webvtt` library, one entry per cue; `Caption.text` already drops inline tags (`<c>`, `<i>`; checked on webvtt-py 0.5.1); a multi-line cue stays one entry;
-- `.srt` → own parser: split on blank lines, drop every line that is only digits (not just the index: a "1999" caption goes too, #9) and every `-->` line, join the rest of the block with spaces; inline tags are kept (#6); a UTF-8 BOM is not stripped, so the first index leaks into the text (#10);
+- `.vtt` → `webvtt` library, one entry per cue line; `Caption.text` already drops inline tags (`<c>`, `<i>`; checked on webvtt-py 0.5.1); a multi-line cue is split into lines before dedup (#3 fixed);
+- `.srt` → own parser: split on blank lines, drop every line that is only digits (not just the index: a "1999" caption goes too, #9) and every `-->` line, join the rest of the block with spaces; inline tags are kept (#6); the file is read as utf-8-sig so a BOM is dropped (#10 fixed);
 - other suffix → `ValueError`.
 Dedup: whitespace collapsed per entry; an entry equal to the previous one is dropped.
 Language: `parse_subtitle` returns text only; the consumer calls `lang_from_subtitle_name`, which takes the second-to-last dot part of the name ("123.en.vtt" → "en"); fewer than 3 parts → "".
@@ -140,10 +140,8 @@ Module: `transcribe`
 
 ## Known gaps
 
-- Model cache is keyed by device only; a second model or compute type is silently served the first model (#1).
 - The `cache` and `not found` markers match any load error mentioning them, which starts a second load with Hub access (#2).
-- Rolling auto-captions with multi-line cues are not deduplicated (#3).
 - `find_subtitle` picks the alphabetically first caption and breaks on ids containing dots (#4).
 - `transcribe_with_fallback` keeps no "GPU is dead" state: every later call reloads the model on `cuda` and fails again (#8).
 - The CUDA model's VRAM is held through the CPU retry (#7).
-- SRT parsing drops all-digit captions, keeps inline tags and leaks a BOM (#9, #6, #10).
+- SRT parsing drops all-digit captions and keeps inline tags (#9, #6).

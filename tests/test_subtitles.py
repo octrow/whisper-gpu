@@ -101,3 +101,20 @@ def test_find_subtitle_handles_glob_chars_in_the_name(tmp_path: Path) -> None:
     sub = tmp_path / "clip[1].en.vtt"
     sub.write_text("WEBVTT\n", encoding="utf-8")
     assert find_subtitle(tmp_path / "clip[1].m4a") == sub
+
+
+def test_parse_vtt_dedups_multiline_rolling_cues(tmp_path: Path) -> None:
+    vtt = (
+        "WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nhello there\n\n"
+        "00:00:01.000 --> 00:00:02.000\nhello there\nhow are you\n\n"
+        "00:00:02.000 --> 00:00:03.000\nhow are you\nfine thanks\n"
+    )
+    p = tmp_path / "1.en.vtt"
+    p.write_text(vtt, encoding="utf-8")
+    assert parse_subtitle(p) == "hello there\nhow are you\nfine thanks"
+
+
+def test_parse_srt_with_bom_keeps_first_cue_clean(tmp_path: Path) -> None:
+    p = tmp_path / "1.en.srt"
+    p.write_text("\ufeff1\n00:00:00,000 --> 00:00:01,000\nhello\n", encoding="utf-8")
+    assert parse_subtitle(p) == "hello"
