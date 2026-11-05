@@ -5,6 +5,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-05
+
+### Added
+
+- Logic map (`docs/logic-map.md`), findings plan and a test that keeps the map in sync with the modules.
+
+### Changed
+
+- README refreshed: shorter, in plain language.
+- Lint fixes: unused `noqa`, `subprocess.run` without `check`, implicit string concatenation, unused unpacked variable.
+- GitHub Actions dependencies bumped.
+
 ## [0.1.3] - 2026-10-15
 
 ### Changed
